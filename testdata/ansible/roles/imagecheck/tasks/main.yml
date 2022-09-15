@@ -1,0 +1,28 @@
+---
+- name: Load yaml file
+  include_vars:
+    dir: /workspace/testdata/compose
+    ignore_unknown_extensions: true
+    extensions:
+      - yml
+      - yaml
+    name: compose
+  register: yaml_return
+
+# - name: Get URLS
+#   debug:
+#     # https://hub.docker.com/v2/repositories/rytsh/frontend-node/tags/v0.1.1
+#     msg: "{% for k,item in yaml_return.ansible_facts.compose.services.items() %} https://hub.docker.com/v2/repositories/{{ item.image.split(':')[0] }}/tags/{{ item.image.split(':')[1] }} {% endfor %}"
+#   when: yaml_return.failed == false
+#   register: url_list
+
+- name: Check image exists
+  pong:
+    check:
+      rest:
+        - concurrent: 1
+          check:
+            - url: "{% for k,item in yaml_return.ansible_facts.compose.services.items() %} https://hub.docker.com/v2/repositories/{{ item.image.split(':')[0] }}/tags/{{ item.image.split(':')[1] }} {% endfor %}"
+              timeout: 1000
+  register: http_result
+  failed_when: http_result.failed

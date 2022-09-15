@@ -1,0 +1,5 @@
+services:
+  test-1:
+    image: rytsh/frontend-node:v0.1.0
+  # test-2:
+  #   image: myawesomeimage:test2
