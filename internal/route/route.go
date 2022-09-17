@@ -16,7 +16,7 @@ func Request(ctx context.Context, args *model.ModuleArgs) []error {
 
 	// call rest requests
 	wg.Add(1)
-	go RestRequest(ctx, wg, errs, args.Check.Rest)
+	go RestRequest(ctx, wg, errs, args.Client.Rest)
 
 	wg.Wait()
 

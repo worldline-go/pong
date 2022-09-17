@@ -16,7 +16,7 @@ Give a json or yaml file with the following structure:
 # LogLevel is the log level, default info
 log_level: "debug"
 
-check:
+client:
   rest:
   - concurrent: 1
     check:
@@ -62,7 +62,7 @@ Example of playbook
 ```yaml
 - name: Check image exists
   pong:
-    check:
+    client:
       rest:
         - concurrent: 1
           check:

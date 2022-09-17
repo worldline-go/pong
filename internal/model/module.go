@@ -17,12 +17,12 @@ type RestClient struct {
 	Check      []RestCheck `json:"check" yaml:"check"`
 }
 
-type Check struct {
+type Client struct {
 	Rest []RestClient `json:"rest" yaml:"rest"`
 }
 
 type ModuleArgs struct {
-	Check Check `json:"check" yaml:"check"`
+	Client Client `json:"client" yaml:"client"`
 	// LogLevel is the log level, default info
 	LogLevel string `json:"log_level" yaml:"log_level"`
 }

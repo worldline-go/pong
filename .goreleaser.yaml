@@ -14,8 +14,8 @@ builds:
       - CGO_ENABLED=0
     goos:
       - linux
-      # - windows
-      # - darwin
+      - windows
+      - darwin
     main: ./cmd/pong
     ldflags:
       - -s -w -X main.version={{.Version}} -X main.commit={{.ShortCommit}} -X main.date={{.Date}}

@@ -41,16 +41,16 @@ func ReadConfig(file string) (*model.ModuleArgs, error) {
 }
 
 func defaultArgs(args *model.ModuleArgs) {
-	for i := range args.Check.Rest {
-		if args.Check.Rest[i].Concurrent == 0 {
-			args.Check.Rest[i].Concurrent = model.DefaultRestClient.Concurrent
+	for i := range args.Client.Rest {
+		if args.Client.Rest[i].Concurrent == 0 {
+			args.Client.Rest[i].Concurrent = model.DefaultRestClient.Concurrent
 		}
-		for j := range args.Check.Rest[i].Check {
-			if args.Check.Rest[i].Check[j].Method == "" {
-				args.Check.Rest[i].Check[j].Method = model.DefaultRestCheck.Method
+		for j := range args.Client.Rest[i].Check {
+			if args.Client.Rest[i].Check[j].Method == "" {
+				args.Client.Rest[i].Check[j].Method = model.DefaultRestCheck.Method
 			}
-			if args.Check.Rest[i].Check[j].Status == 0 {
-				args.Check.Rest[i].Check[j].Status = model.DefaultRestCheck.Status
+			if args.Client.Rest[i].Check[j].Status == 0 {
+				args.Client.Rest[i].Check[j].Status = model.DefaultRestCheck.Status
 			}
 		}
 	}
