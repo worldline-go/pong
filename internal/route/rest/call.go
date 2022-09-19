@@ -2,6 +2,7 @@ package rest
 
 import (
 	"context"
+	"regexp"
 	"strings"
 	"sync"
 	"time"
@@ -10,10 +11,14 @@ import (
 	"github.com/worldline-go/pong/internal/registry"
 )
 
+// regex for space
+var rgxSpace = regexp.MustCompile(`\s+`)
+
 func Request(ctx context.Context, cancel context.CancelFunc, wg *sync.WaitGroup, args *model.RestCheck, concurrent int, reg *registry.ClientReg) {
 	// remove trailing spaces and multiple spaces
 	urlX := strings.TrimSpace(args.URL)
-	urlX = strings.ReplaceAll(urlX, "  ", " ")
+
+	urlX = rgxSpace.ReplaceAllString(urlX, " ")
 
 	urls := strings.Split(urlX, " ")
 	timeout := time.Duration(args.Timeout) * time.Millisecond
