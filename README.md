@@ -19,15 +19,37 @@ log_level: "debug"
 client:
   rest:
   - concurrent: 1
+    setting:
+      # InsecureSkipVerify is the flag to skip the verification of the server's certificate chain and host name
+      insecureSkipVerify: false
     check:
       # URL could be multiple URLs, separated by space
-    - url: "https://api.punkapi.com/v2/beers/1 https://api.punkapi.com/v2/beers/2"
+    - url: "https://api.punkapi.com/v2/beers/1 https://api.punkapi.com/v2/beers/2?pong=test"
       # Method is the HTTP method to use, default is GET
       method: GET
       # Timeout is in millisecond, default is 0 (no timeout)
       timeout: 1000
       # Status to check, default 200
       status: 200
+      # Body to check, default empty
+      body:
+        # Variable hold the variables to be used in the template
+        variable:
+          # From is the source of the variable
+          from:
+            # Query get the value from the query string
+            query:
+            - "pong"
+          # Set is the set of variables
+          set:
+            val1: "abc"
+        # Map is the body to be compared give raw map with template, default not check
+        # Subset of the body is allowed
+        map: |
+          - name: {{ .pong }}
+        # Raw is the raw body to be compared, default not check
+        raw: |-
+          Raw body to check
 ```
 
 ```sh

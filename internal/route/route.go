@@ -29,7 +29,7 @@ func RestRequest(ctx context.Context, wg *sync.WaitGroup, errs *registry.Errors,
 	wgRest := &sync.WaitGroup{}
 	for _, client := range args {
 		// new area for each client
-		reg := registry.NewClientReg(errs)
+		reg := registry.NewClientReg(errs, client.Setting)
 		wgRest.Add(1)
 		// fast pass
 		go RestCheck(ctx, wgRest, client.Check, client.Concurrent, reg)

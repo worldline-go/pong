@@ -24,9 +24,10 @@ func Request(ctx context.Context, cancel context.CancelFunc, wg *sync.WaitGroup,
 	timeout := time.Duration(args.Timeout) * time.Millisecond
 
 	gData := GeneralData{}
+	cData, _ := reg.ClientData.(model.RestSetting)
 
 	// create a new client holderFunc
-	newClientHolderFn := NewClientHolder(gData)
+	newClientHolderFn := NewClientHolder(gData, cData)
 
 	for i, url := range urls {
 		selectedClient := i % concurrent
@@ -35,8 +36,7 @@ func Request(ctx context.Context, cancel context.CancelFunc, wg *sync.WaitGroup,
 
 		if err := reg.SendMessage(ctx, &Msg{
 			URL:     url,
-			Method:  args.Method,
-			Status:  args.Status,
+			Args:    *args,
 			Timeout: timeout,
 		}); err != nil {
 			break
