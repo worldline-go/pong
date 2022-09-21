@@ -20,6 +20,15 @@ func Response(response *model.ModuleResponse) error {
 	return nil
 }
 
+func ResponseError(err error) {
+	response := model.ModuleResponse{
+		Msg:    err.Error(),
+		Failed: true,
+	}
+
+	ResponseLog(&response)
+}
+
 func ResponseLog(response *model.ModuleResponse) {
 	if err := Response(response); err != nil {
 		log.Error().Err(err).Msg("while responding")

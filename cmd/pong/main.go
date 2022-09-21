@@ -16,6 +16,7 @@ import (
 	"github.com/worldline-go/pong/internal/load"
 	"github.com/worldline-go/pong/internal/model"
 	"github.com/worldline-go/pong/internal/route"
+	"github.com/worldline-go/pong/pkg/template"
 )
 
 var (
@@ -81,12 +82,7 @@ func main() {
 
 	// check length of the arguments
 	if len(files) == 0 {
-		if err := load.Response(&model.ModuleResponse{
-			Msg:    "Missing argument file",
-			Failed: true,
-		}); err != nil {
-			log.Error().Err(err).Msg("error while responding")
-		}
+		load.ResponseError(fmt.Errorf("missing argument file"))
 
 		exitCode = 1
 
@@ -123,12 +119,15 @@ func main() {
 	for _, file := range files {
 		args, err := load.ReadConfig(file)
 		if err != nil {
-			if err := load.Response(&model.ModuleResponse{
-				Msg:    err.Error(),
-				Failed: true,
-			}); err != nil {
-				log.Error().Err(err).Msg("error while responding")
-			}
+			load.ResponseError(err)
+
+			exitCode = 1
+
+			return
+		}
+
+		if err := template.SetDelimeters(args.Delims); err != nil {
+			load.ResponseError(err)
 
 			exitCode = 1
 

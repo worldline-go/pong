@@ -16,6 +16,11 @@ Give a json or yaml file with the following structure:
 # LogLevel is the log level, default info
 log_level: "debug"
 
+# Delims for gotemplate, set the delimeter to avoid conflict with the other template engines
+# delims:
+# - "{{"
+# - "}}"
+
 client:
   rest:
   - concurrent: 1
