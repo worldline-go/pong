@@ -6,10 +6,10 @@ type RestCheckBodyVarsFrom struct {
 }
 
 type RestCheckBodyVars struct {
-	// From is the source of the variable
-	From RestCheckBodyVarsFrom `json:"from" yaml:"from"`
 	// Set is the set of variables
 	Set map[string]interface{} `json:"set" yaml:"set"`
+	// From is the source of the variable
+	From RestCheckBodyVarsFrom `json:"from" yaml:"from"`
 }
 
 type RestCheckBody struct {

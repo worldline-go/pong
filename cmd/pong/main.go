@@ -126,7 +126,7 @@ func main() {
 			return
 		}
 
-		if err := template.SetDelimeters(args.Delims); err != nil {
+		if err := template.SetDelimeters(args.Delimeters); err != nil {
 			load.ResponseError(err)
 
 			exitCode = 1
