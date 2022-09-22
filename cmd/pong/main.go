@@ -126,12 +126,14 @@ func main() {
 			return
 		}
 
-		if err := template.SetDelimeters(args.Delimeters); err != nil {
-			load.ResponseError(err)
+		if len(args.Delimeters) >= 2 {
+			if err := template.SetDelimeters(args.Delimeters); err != nil {
+				load.ResponseError(err)
 
-			exitCode = 1
+				exitCode = 1
 
-			return
+				return
+			}
 		}
 
 		errs := route.Request(ctx, args)
