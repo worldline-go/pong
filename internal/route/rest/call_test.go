@@ -87,7 +87,7 @@ func TestRequest(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			wg := &sync.WaitGroup{}
 			errs := &registry.Errors{}
-			reg := registry.NewClientReg(errs)
+			reg := registry.NewClientReg(errs, nil)
 
 			handlerFunc = tt.handler
 			urls := strings.Split(tt.args.check.URL, " ")

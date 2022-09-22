@@ -7,17 +7,19 @@ import (
 )
 
 type ClientReg struct {
-	msgChan chan interface{}
-	clients []interface{}
+	msgChan    chan interface{}
+	clients    []interface{}
+	ClientData interface{}
 	*Errors
 	// mutexErr sync.RWMutex
 }
 
-func NewClientReg(errs *Errors) *ClientReg {
+func NewClientReg(errs *Errors, cData interface{}) *ClientReg {
 	msgChan := make(chan interface{})
 	return &ClientReg{
-		msgChan: msgChan,
-		Errors:  errs,
+		msgChan:    msgChan,
+		Errors:     errs,
+		ClientData: cData,
 	}
 }
 
