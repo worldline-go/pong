@@ -21,17 +21,29 @@ type RestCheckBody struct {
 	Map *string `json:"map" yaml:"map"`
 }
 
-type RestCheck struct {
+type RestRequest struct {
 	// URL could be multiple URLs, separated by space
 	URL string `json:"url" yaml:"url"`
 	// Method is the HTTP method to use, default is GET
 	Method string `json:"method" yaml:"method"`
-	// Status to check, default 200
-	Status int `json:"status" yaml:"status"`
-	// Body to check
-	Body *RestCheckBody `json:"body" yaml:"body"`
 	// Timeout is in seconds, default 5
 	Timeout int `json:"timeout" yaml:"timeout"`
+	// Headers is the HTTP headers to be used
+	Headers map[string]string `json:"headers" yaml:"headers"`
+}
+
+type RestRespond struct {
+	// Status is the HTTP status code to be expected
+	Status int `json:"status" yaml:"status"`
+	// Body is the body to be compared
+	Body *RestCheckBody `json:"body" yaml:"body"`
+}
+
+type RestCheck struct {
+	// Request is the request to be made
+	Request RestRequest `json:"request" yaml:"request"`
+	// Respond is the response to be expected
+	Respond RestRespond `json:"respond" yaml:"respond"`
 }
 
 type RestSetting struct {

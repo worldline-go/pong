@@ -1,8 +1,12 @@
 package model
 
 var DefaultRestCheck = RestCheck{
-	Method: "GET",
-	Status: 200,
+	Request: RestRequest{
+		Method: "GET",
+	},
+	Respond: RestRespond{
+		Status: 200,
+	},
 }
 
 var DefaultRestClient = RestClient{

@@ -16,12 +16,10 @@ var rgxSpace = regexp.MustCompile(`\s+`)
 
 func Request(ctx context.Context, cancel context.CancelFunc, wg *sync.WaitGroup, args *model.RestCheck, concurrent int, reg *registry.ClientReg) {
 	// remove trailing spaces and multiple spaces
-	urlX := strings.TrimSpace(args.URL)
-
-	urlX = rgxSpace.ReplaceAllString(urlX, " ")
+	urlX := rgxSpace.ReplaceAllString(strings.TrimSpace(args.Request.URL), " ")
 
 	urls := strings.Split(urlX, " ")
-	timeout := time.Duration(args.Timeout) * time.Millisecond
+	timeout := time.Duration(args.Request.Timeout) * time.Millisecond
 
 	gData := GeneralData{}
 	cData, _ := reg.ClientData.(model.RestSetting)

@@ -29,8 +29,12 @@ func TestRequest(t *testing.T) {
 			name: "simple one test",
 			args: args{
 				check: &model.RestCheck{
-					Status:  200,
-					Timeout: 2,
+					Respond: model.RestRespond{
+						Status: 200,
+					},
+					Request: model.RestRequest{
+						Timeout: 2,
+					},
 				},
 			},
 			concurrent: 1,
@@ -43,10 +47,14 @@ func TestRequest(t *testing.T) {
 			name: "multi test",
 			args: args{
 				check: &model.RestCheck{
-					URL:     "/abc /xyz",
-					Method:  "GET",
-					Status:  200,
-					Timeout: 2,
+					Request: model.RestRequest{
+						Timeout: 2,
+						Method:  "GET",
+						URL:     "/abc /xyz",
+					},
+					Respond: model.RestRespond{
+						Status: 200,
+					},
 				},
 			},
 			concurrent: 1,
@@ -60,10 +68,14 @@ func TestRequest(t *testing.T) {
 			name: "multi test with concurrent",
 			args: args{
 				check: &model.RestCheck{
-					URL:     "/abc /xyz",
-					Method:  "GET",
-					Status:  200,
-					Timeout: 2,
+					Request: model.RestRequest{
+						URL:     "/abc /xyz",
+						Method:  "GET",
+						Timeout: 2,
+					},
+					Respond: model.RestRespond{
+						Status: 200,
+					},
 				},
 			},
 			concurrent: 2,
@@ -71,6 +83,35 @@ func TestRequest(t *testing.T) {
 			wantIn:     true,
 			handler: func(w http.ResponseWriter, r *http.Request) {
 				w.WriteHeader(http.StatusBadGateway)
+			},
+		},
+		{
+			name: "test header",
+			args: args{
+				check: &model.RestCheck{
+					Request: model.RestRequest{
+						URL:     "/abc /xyz",
+						Method:  "GET",
+						Timeout: 2,
+						Headers: map[string]string{
+							"X-Test":  "test",
+							"X-Test2": "test2",
+						},
+					},
+					Respond: model.RestRespond{
+						Status: 200,
+					},
+				},
+			},
+			concurrent: 2,
+			want:       `[]`,
+			handler: func(w http.ResponseWriter, r *http.Request) {
+				if r.Header.Get("X-Test") != "test" && r.Header.Get("X-Test2") != "test2" {
+					w.WriteHeader(http.StatusBadGateway)
+					return
+				}
+
+				w.WriteHeader(http.StatusOK)
 			},
 		},
 	}
@@ -90,12 +131,12 @@ func TestRequest(t *testing.T) {
 			reg := registry.NewClientReg(errs, nil)
 
 			handlerFunc = tt.handler
-			urls := strings.Split(tt.args.check.URL, " ")
+			urls := strings.Split(tt.args.check.Request.URL, " ")
 			for i, url := range urls {
 				urls[i] = fmt.Sprintf("%s%s", srv.URL, url)
 			}
 
-			tt.args.check.URL = strings.Join(urls, " ")
+			tt.args.check.Request.URL = strings.Join(urls, " ")
 			ctx, cancel := context.WithCancel(context.Background())
 			Request(ctx, cancel, wg, tt.args.check, tt.concurrent, reg)
 			reg.CloseChan()

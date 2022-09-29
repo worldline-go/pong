@@ -1,7 +1,5 @@
 BINARY  := pong
-ROOT_DIR := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 VERSION := $(or $(IMAGE_TAG),$(shell git describe --tags --first-parent --match "v*" 2> /dev/null || echo v0.0.0))
-LOCAL_BIN_DIR := $(ROOT_DIR)/bin
 
 .DEFAULT_GOAL := help
 

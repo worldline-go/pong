@@ -58,18 +58,24 @@ func NewClientHolder(gData GeneralData, cData model.RestSetting) func(ctx contex
 }
 
 func (c *ClientHolder) DoRequest(ctx context.Context, timeout time.Duration, urlV string, m model.RestCheck) error {
-	method := cleanMethod(m.Method)
+	method := cleanMethod(m.Request.Method)
 
 	ctxT := ctx
+
 	if timeout != 0 {
 		var cancel context.CancelFunc
 		ctxT, cancel = context.WithTimeout(ctx, timeout)
+
 		defer cancel()
 	}
 
 	req, err := http.NewRequestWithContext(ctxT, method, urlV, nil)
 	if err != nil {
 		return fmt.Errorf("%s, creating request: %w", urlV, err)
+	}
+
+	for k, v := range m.Request.Headers {
+		req.Header.Set(k, v)
 	}
 
 	resp, err := c.Client.Do(req)
@@ -81,19 +87,19 @@ func (c *ClientHolder) DoRequest(ctx context.Context, timeout time.Duration, url
 	body, _ := io.ReadAll(resp.Body)
 	log.Info().Msgf("%s", body)
 
-	if resp.StatusCode != m.Status {
-		return fmt.Errorf("%s, status code: %d; want: %d", urlV, resp.StatusCode, m.Status)
+	if resp.StatusCode != m.Respond.Status {
+		return fmt.Errorf("%s, status code: %d; want: %d", urlV, resp.StatusCode, m.Respond.Status)
 	}
 
-	if m.Body != nil {
-		if m.Body.Map != nil {
+	if m.Respond.Body != nil {
+		if m.Respond.Body.Map != nil {
 			var bodyMap interface{}
 			if err := yaml.Unmarshal(body, &bodyMap); err != nil {
 				return fmt.Errorf("%s, unmarshaling body: %w", body, err)
 			}
 
-			mapValues := m.Body.Variable.Set
-			if m.Body.Variable.Set == nil {
+			mapValues := m.Respond.Body.Variable.Set
+			if m.Respond.Body.Variable.Set == nil {
 				mapValues = make(map[string]interface{})
 			}
 
@@ -103,11 +109,11 @@ func (c *ClientHolder) DoRequest(ctx context.Context, timeout time.Duration, url
 			}
 
 			urlValues := urlP.Query()
-			for _, queryValue := range m.Body.Variable.From.Query {
+			for _, queryValue := range m.Respond.Body.Variable.From.Query {
 				mapValues[queryValue] = urlValues.Get(queryValue)
 			}
 
-			rendered, err := template.Ext(mapValues, *m.Body.Map)
+			rendered, err := template.Ext(mapValues, *m.Respond.Body.Map)
 			if err != nil {
 				return fmt.Errorf("%s, rendering template: %w", urlV, err)
 			}
@@ -123,9 +129,9 @@ func (c *ClientHolder) DoRequest(ctx context.Context, timeout time.Duration, url
 			}
 		}
 
-		if m.Body.Raw != nil {
-			if *m.Body.Raw != string(body) {
-				return fmt.Errorf("%s, comparing body: %s; want: %s", urlV, body, *m.Body.Raw)
+		if m.Respond.Body.Raw != nil {
+			if *m.Respond.Body.Raw != string(body) {
+				return fmt.Errorf("%s, comparing body: %s; want: %s", urlV, body, *m.Respond.Body.Raw)
 			}
 		}
 	}

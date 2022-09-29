@@ -45,12 +45,14 @@ func defaultArgs(args *model.ModuleArgs) {
 		if args.Client.Rest[i].Concurrent == 0 {
 			args.Client.Rest[i].Concurrent = model.DefaultRestClient.Concurrent
 		}
+
 		for j := range args.Client.Rest[i].Check {
-			if args.Client.Rest[i].Check[j].Method == "" {
-				args.Client.Rest[i].Check[j].Method = model.DefaultRestCheck.Method
+			if args.Client.Rest[i].Check[j].Request.Method == "" {
+				args.Client.Rest[i].Check[j].Request.Method = model.DefaultRestCheck.Request.Method
 			}
-			if args.Client.Rest[i].Check[j].Status == 0 {
-				args.Client.Rest[i].Check[j].Status = model.DefaultRestCheck.Status
+
+			if args.Client.Rest[i].Check[j].Respond.Status == 0 {
+				args.Client.Rest[i].Check[j].Respond.Status = model.DefaultRestCheck.Respond.Status
 			}
 		}
 	}

@@ -7,7 +7,8 @@ client:
   rest:
   - concurrent: 1
     check:
-    - url: "https://api.punkapi.com/v2/beers/1?pong=Buzz"
+    - request:
+        url: "https://api.punkapi.com/v2/beers/1?pong=Buzz"
       status: 200
       body:
         variable:
