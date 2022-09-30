@@ -1,0 +1,13 @@
+log_level: "warn"
+client:
+  rest:
+  - concurrent: 1
+    check:
+    - request:
+        url: "http://httpbin.org/basic-auth/user/passwd"
+        timeout: 1000
+        basicAuth:
+          username: "user"
+          password: "passwd"
+      respond:
+        status: 200

@@ -35,11 +35,15 @@ client:
         method: GET
         # Timeout is in millisecond, default is 0 (no timeout)
         timeout: 1000
-        # Status to check, default 200
+        # Headers is the HTTP headers to use
         headers:
           Accept: application/json
           Content-Type: application/json
           Authorization: Bearer ABCDEFG
+        # BasicAuth is the basic auth to use
+        basicAuth:
+          username: "username"
+          password: "password"
       respond:
         # Status to check, default 200
         status: 200

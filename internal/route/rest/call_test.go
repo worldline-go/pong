@@ -50,7 +50,7 @@ func TestRequest(t *testing.T) {
 					Request: model.RestRequest{
 						Timeout: 2,
 						Method:  "GET",
-						URL:     "/abc /xyz",
+						URL:     "/abc /xyz /def /a /b /c /d /e /f /g /h /i /j /k /l /m /n /o /p /q /r /s /t /u /v /w /x /y /z",
 					},
 					Respond: model.RestRespond{
 						Status: 200,
@@ -69,7 +69,7 @@ func TestRequest(t *testing.T) {
 			args: args{
 				check: &model.RestCheck{
 					Request: model.RestRequest{
-						URL:     "/abc /xyz",
+						URL:     "/abc /xyz /def /a /b /c /d /e /f /g /h /i /j /k /l /m /n /o /p /q /r /s /t /u /v /w /x /y /z",
 						Method:  "GET",
 						Timeout: 2,
 					},
@@ -78,7 +78,7 @@ func TestRequest(t *testing.T) {
 					},
 				},
 			},
-			concurrent: 2,
+			concurrent: 20,
 			want:       `status code: 502; want: 200`,
 			wantIn:     true,
 			handler: func(w http.ResponseWriter, r *http.Request) {
@@ -117,8 +117,12 @@ func TestRequest(t *testing.T) {
 	}
 
 	var handlerFunc = func(w http.ResponseWriter, r *http.Request) {}
+	mx := sync.RWMutex{}
 
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		mx.RLock()
+		defer mx.RUnlock()
+
 		if handlerFunc != nil {
 			handlerFunc(w, r)
 		}
@@ -130,7 +134,10 @@ func TestRequest(t *testing.T) {
 			errs := &registry.Errors{}
 			reg := registry.NewClientReg(errs, nil)
 
+			mx.Lock()
 			handlerFunc = tt.handler
+			mx.Unlock()
+
 			urls := strings.Split(tt.args.check.Request.URL, " ")
 			for i, url := range urls {
 				urls[i] = fmt.Sprintf("%s%s", srv.URL, url)

@@ -78,6 +78,11 @@ func (c *ClientHolder) DoRequest(ctx context.Context, timeout time.Duration, url
 		req.Header.Set(k, v)
 	}
 
+	// add basic auth
+	if m.Request.BasicAuth != nil {
+		req.SetBasicAuth(m.Request.BasicAuth.Username, m.Request.BasicAuth.Password)
+	}
+
 	resp, err := c.Client.Do(req)
 	if err != nil {
 		return fmt.Errorf("%s, doing request: %w", urlV, err)

@@ -21,6 +21,13 @@ type RestCheckBody struct {
 	Map *string `json:"map" yaml:"map"`
 }
 
+type RestBasicAuth struct {
+	// Username is the username
+	Username string `json:"username" yaml:"username"`
+	// Password is the password
+	Password string `json:"password" yaml:"password"`
+}
+
 type RestRequest struct {
 	// URL could be multiple URLs, separated by space
 	URL string `json:"url" yaml:"url"`
@@ -30,6 +37,8 @@ type RestRequest struct {
 	Timeout int `json:"timeout" yaml:"timeout"`
 	// Headers is the HTTP headers to be used
 	Headers map[string]string `json:"headers" yaml:"headers"`
+	// BasicAuth is the basic auth to be used
+	BasicAuth *RestBasicAuth `json:"basicAuth" yaml:"basicAuth"`
 }
 
 type RestRespond struct {
