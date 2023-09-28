@@ -1,0 +1,15 @@
+client:
+  rest:
+  - concurrent: 1
+    continueOnError: true
+    check:
+    - request:
+        url: >-
+          https://hub.docker.com/v2/repositories/rytsh/ssh/tags/latest
+          https://hub.docker.com/v2/repositories/rytsh/ssh/tags/xxx
+          https://hub.docker.com/v2/repositories/rytsh/ssh/tags/3.18.2
+          https://hub.docker.com/v2/repositories/rytsh/ssh/tags/yyy
+          https://hub.docker.com/v2/repositories/rytsh/ssh/tags/zzz
+        timeout: 1000
+      respond:
+        status: 200

@@ -3,6 +3,7 @@ package rest
 import (
 	"context"
 	"crypto/tls"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -165,11 +166,16 @@ func (c *ClientHolder) Work() {
 			log.Debug().Msgf("Sending request to %s", m.URL)
 
 			if err := c.DoRequest(c.Ctx, m.Timeout, m.URL, m.Args); err != nil {
-				c.close()
 				// record error
-				c.Reg.AddError(err)
+				if !errors.Is(err, context.Canceled) {
+					c.Reg.AddError(err)
+				}
 
-				return
+				if !c.Reg.ContinueErr {
+					c.close()
+
+					return
+				}
 			}
 		}
 	}

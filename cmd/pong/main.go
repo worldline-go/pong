@@ -5,12 +5,11 @@ import (
 	"flag"
 	"fmt"
 	"os"
-	"os/signal"
 	"strings"
 	"sync"
-	"syscall"
 
 	"github.com/rs/zerolog/log"
+	"github.com/worldline-go/initializer"
 	"github.com/worldline-go/logz"
 
 	"github.com/worldline-go/pong/internal/load"
@@ -46,9 +45,7 @@ func usage() {
 	os.Exit(0)
 }
 
-var (
-	flagVersion bool
-)
+var flagVersion bool
 
 func flagParse() []string {
 	flag.Usage = usage
@@ -68,71 +65,47 @@ func flagParse() []string {
 }
 
 func main() {
-	logz.InitializeLog(nil)
-
 	files := flagParse()
 
-	exitCode := 0
-	wg := &sync.WaitGroup{}
-
-	defer func() {
-		wg.Wait()
-		os.Exit(exitCode)
-	}()
-
-	// check length of the arguments
-	if len(files) == 0 {
-		load.ResponseError(fmt.Errorf("missing argument file"))
-
-		exitCode = 1
-
-		return
+	initFn := Init{
+		files: files,
 	}
 
-	// start operation
-	chNotify := make(chan os.Signal, 1)
+	initializer.Init(
+		initFn.run,
+		initializer.WithMsgf("pong [%s]", version),
+		initializer.WithOptionsLogz(logz.WithCaller(false)),
+	)
+}
 
-	signal.Notify(chNotify, os.Interrupt, syscall.SIGTERM)
+type Init struct {
+	files []string
+}
 
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+func (s Init) run(ctx context.Context, wg *sync.WaitGroup) error {
+	// check length of the arguments
+	if len(s.files) == 0 {
+		err := fmt.Errorf("missing argument file")
+		load.ResponseError(err)
 
-	wg.Add(1)
-
-	go func() {
-		defer wg.Done()
-
-		select {
-		case <-ctx.Done():
-			return
-		case <-chNotify:
-			log.Info().Msg("shutting down...")
-			log.Info().Msg("send signal again to exit force")
-			signal.Stop(chNotify)
-			close(chNotify)
-			cancel()
-		}
-	}()
+		return err
+	}
 
 	var errRequests []error
 	// read config
-	for _, file := range files {
+	for _, file := range s.files {
 		args, err := load.ReadConfig(file)
 		if err != nil {
 			load.ResponseError(err)
 
-			exitCode = 1
-
-			return
+			return err
 		}
 
 		if len(args.Delimeters) >= 2 {
 			if err := template.SetDelimeters(args.Delimeters); err != nil {
 				load.ResponseError(err)
 
-				exitCode = 1
-
-				return
+				return err
 			}
 		}
 
@@ -148,7 +121,7 @@ func main() {
 			Failed: false,
 		})
 
-		return
+		return nil
 	}
 
 	var errStrings []string
@@ -161,4 +134,6 @@ func main() {
 		Msg:    strings.Join(errStrings, " "),
 		Failed: true,
 	})
+
+	return nil
 }

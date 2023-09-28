@@ -1,8 +1,9 @@
 # PONG 🏓
 
-[![Codecov](https://img.shields.io/codecov/c/github/worldline-go/pong?logo=codecov&style=flat-square)](https://app.codecov.io/gh/worldline-go/pong)
-[![GitHub Workflow Status](https://img.shields.io/github/workflow/status/worldline-go/pong/Test?logo=github&style=flat-square&label=ci)](https://github.com/worldline-go/pong/actions)
-[![Go Reference](https://pkg.go.dev/badge/github.com/worldline-go/pong.svg)](https://pkg.go.dev/github.com/worldline-go/pong)
+[![License](https://img.shields.io/github/license/worldline-go/pong?color=red&style=flat-square)](https://raw.githubusercontent.com/worldline-go/pong/main/LICENSE)
+[![Coverage](https://img.shields.io/sonar/coverage/worldline-go_pong?logo=sonarcloud&server=https%3A%2F%2Fsonarcloud.io&style=flat-square)](https://sonarcloud.io/summary/overall?id=worldline-go_pong)
+[![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/worldline-go/pong/test.yml?branch=main&logo=github&style=flat-square&label=ci)](https://github.com/worldline-go/pong/actions)
+[![Go Report Card](https://goreportcard.com/badge/github.com/worldline-go/pong?style=flat-square)](https://goreportcard.com/report/github.com/worldline-go/pong)
 
 Pong status checker.
 
@@ -24,6 +25,7 @@ log_level: "debug"
 client:
   rest:
   - concurrent: 1
+    continueOnError: false
     setting:
       # InsecureSkipVerify is the flag to skip the verification of the server's certificate chain and host name
       insecureSkipVerify: false

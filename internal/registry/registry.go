@@ -4,22 +4,26 @@ import (
 	"context"
 	"fmt"
 	"sync"
+
+	"github.com/worldline-go/pong/internal/model"
 )
 
 type ClientReg struct {
-	msgChan    chan interface{}
-	clients    []interface{}
-	ClientData interface{}
+	msgChan     chan interface{}
+	clients     []interface{}
+	ClientData  model.RestSetting
+	ContinueErr bool
 	*Errors
-	// mutexErr sync.RWMutex
 }
 
-func NewClientReg(errs *Errors, cData interface{}) *ClientReg {
+func NewClientReg(errs *Errors, cData model.RestSetting, continueErr bool) *ClientReg {
 	msgChan := make(chan interface{})
+
 	return &ClientReg{
-		msgChan:    msgChan,
-		Errors:     errs,
-		ClientData: cData,
+		msgChan:     msgChan,
+		Errors:      errs,
+		ClientData:  cData,
+		ContinueErr: continueErr,
 	}
 }
 

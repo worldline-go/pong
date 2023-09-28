@@ -33,7 +33,7 @@ type RestRequest struct {
 	URL string `json:"url" yaml:"url"`
 	// Method is the HTTP method to use, default is GET
 	Method string `json:"method" yaml:"method"`
-	// Timeout is in seconds, default 5
+	// Timeout in milliseconds, default is 0 (no timeout)
 	Timeout int `json:"timeout" yaml:"timeout"`
 	// Headers is the HTTP headers to be used
 	Headers map[string]string `json:"headers" yaml:"headers"`
@@ -66,4 +66,6 @@ type RestClient struct {
 	Setting RestSetting `json:"setting" yaml:"setting"`
 	// Checks is the list of checks
 	Check []RestCheck `json:"check" yaml:"check"`
+	// ContinueOnError is the flag to continue on error
+	ContinueOnError bool `json:"continueOnError" yaml:"continueOnError"`
 }

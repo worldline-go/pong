@@ -3,6 +3,13 @@
 project_name: pong
 
 release:
+  header: |
+    Get the latest release with brew or binary:
+
+    ```sh
+    # curl -fSL https://github.com/worldline-go/pong/releases/latest/download/pong_Linux_x86_64.tar.gz | tar -xz --overwrite -C ~/bin/ pong
+    curl -fSL https://github.com/worldline-go/pong/releases/download/{{ .Tag }}/pong_Linux_x86_64.tar.gz | tar -xz --overwrite -C ~/bin/ pong
+    ```
   footer: |
     **Full Changelog**: https://github.com/worldline-go/pong/compare/{{ .PreviousTag }}...{{ .Tag }}
 before:
@@ -16,19 +23,22 @@ builds:
       - linux
       - windows
       - darwin
+    goarch:
+      - amd64
+      - arm
+      - arm64
     main: ./cmd/pong
     ldflags:
       - -s -w -X main.version={{.Version}} -X main.commit={{.ShortCommit}} -X main.date={{.Date}}
     flags:
       - -trimpath
 archives:
-  - replacements:
-      darwin: Darwin
-      linux: Linux
-      windows: Windows
-      386: i386
-      amd64: x86_64
-    name_template: '{{ .ProjectName }}_{{ .Os }}_{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}'
+  - name_template: >-
+      {{ .ProjectName }}_
+      {{- title .Os }}_
+      {{- if eq .Arch "amd64" }}x86_64
+      {{- else if eq .Arch "386" }}i386
+      {{- else }}{{ .Arch }}{{ end }}
     format_overrides:
       - goos: windows
         format: zip

@@ -10,5 +10,6 @@ var DefaultRestCheck = RestCheck{
 }
 
 var DefaultRestClient = RestClient{
-	Concurrent: 1,
+	Concurrent:      1,
+	ContinueOnError: false,
 }
